@@ -1,0 +1,48 @@
+
+## Problem
+
+Given an array of integers where 1 ≤ a[i] ≤ *n* (*n* = size of array), some elements appear twice and others appear once.
+
+Find all the elements of [1, *n*] inclusive that do not appear in this array.
+
+Could you do it without extra space and in O(*n*) runtime? You may assume the returned list does not count as extra space.
+
+**Example:**
+
+```
+Input:
+[4,3,2,7,8,2,3,1]
+
+Output:
+[5,6]
+```
+
+
+
+---
+
+## Solution
+
+这道题和 **FindAllDuplicatesInAnArray** 其实是一样的，只是在输出的时候，输出的不是重复数字，而是缺失的数字。
+
+```c++
+class Solution {
+public:
+    vector<int> findDisappearedNumbers(vector<int>& nums) {
+        int i = 0;
+        vector<int> res;
+        while (i < nums.size()) {
+            if (nums[i] != nums[nums[i] - 1])
+                swap(nums[i], nums[nums[i] - 1]);
+            else 
+                i++;
+        }
+        for (i = 0; i < nums.size(); i++) {
+            if (i + 1 != nums[i])
+                res.emplace_back(i+1);
+        }
+        return res;
+    }
+};
+```
+

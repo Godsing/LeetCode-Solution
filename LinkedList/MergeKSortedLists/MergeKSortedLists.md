@@ -1,0 +1,114 @@
+## Problem
+
+Merge *k* sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
+
+**Example:**
+
+```
+Input:
+[
+  1->4->5,
+  1->3->4,
+  2->6
+]
+Output: 1->1->2->3->4->4->5->6
+```
+
+
+
+## Solution
+
+一开始的解法：（超时）
+
+```cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+struct ValIndex {
+    int val;
+    int index;
+    ValIndex(int x, int y) : val(x), index(y) {}
+};
+
+class MyComp {
+ public:
+  bool operator() (const ValIndex& ln1, const ValIndex& ln2) {
+      return ln1.val > ln2.val;
+  }
+};
+
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        priority_queue <ValIndex, vector<ValIndex>, MyComp> pq;
+        int i = 0;
+        for (i = 0; i < lists.size(); i++) {
+            if (lists[i]) pq.push(ValIndex(lists[i]->val, i));
+        }
+        if (pq.empty()) return nullptr;
+        ListNode* res = new ListNode(0);
+        ListNode* tmp = res;
+        while (!pq.empty()) {
+            i = pq.top().index;
+            tmp->next = lists[i];
+            tmp = tmp->next;
+            pq.pop();
+            if (tmp->next) pq.push(ValIndex(tmp->next->val, i));
+        }
+        return res->next;
+    }
+};
+```
+
+后来看了投票最高的 java 解法 [A java solution based on Priority Queue](https://leetcode.com/problems/merge-k-sorted-lists/discuss/10528/A-java-solution-based-on-Priority-Queue)，才意识到，我通过存储链表编号来获取重新获取链表结点的方法相当于绕了一个大弯，不超时才怪。修改后的代码如下：
+
+```cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class MyComp {  // 也可以是结构体，但不能直接是一个函数
+public:
+    bool operator() (const ListNode* ln1, const ListNode* ln2) const {  // 指针无需引用
+          return ln1->val > ln2->val;
+    }
+};
+
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        // vector<ListNode*> 没有 ! 和 == 操作符，所以没有 !lists 和 lists==NULL 的用法
+        if (lists.size() == 0) return nullptr;
+        priority_queue<ListNode*, vector<ListNode*>, MyComp> pq;
+        for (auto l : lists) {
+            if (l) pq.push(l);
+        }
+        if (pq.empty()) return nullptr;
+        ListNode* res = new ListNode(0);
+        ListNode* tmp = res;
+        while (!pq.empty()) {
+            tmp->next = pq.top();
+            tmp = tmp->next;
+            pq.pop();
+            if (tmp->next) pq.push(tmp->next);
+        }
+        return res->next;
+    }
+};
+```
+
+
+
+## Debug&Learning
+
+
+

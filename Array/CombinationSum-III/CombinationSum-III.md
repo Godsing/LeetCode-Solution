@@ -1,0 +1,100 @@
+## Problem
+
+Find all possible combinations of ***k*** numbers that add up to a number ***n***, given that only numbers from 1 to 9 can be used and each combination should be a unique set of numbers.
+
+***Example 1:***
+
+Input: ***k*** = 3, ***n*** = 7
+
+Output:
+
+```
+[[1,2,4]]
+```
+
+***Example 2:***
+
+Input: ***k*** = 3, ***n*** = 9
+
+Output:
+
+```
+[[1,2,6], [1,3,5], [2,3,4]]
+```
+
+**Credits:**
+Special thanks to [@mithmatt](https://leetcode.com/discuss/user/mithmatt) for adding this problem and creating all test cases.
+
+
+
+## Solution
+
+使用回溯法。
+
+首先确定问题的解空间树，比如，对于输入的 k, n，意味着树的深度为 k，每个节点表示一个数，某个分支表示在当前节点的情况下的某个下一节点。解空间可能有多个满足条件的解，我们需要全都找到，所以找到一个解时需要记录下来，并继续寻找下一个解。
+
+**基本思路**：层层搜索（通过递归调用实现），每层只需判断节点是否符合条件，到叶子节点判断是否符合一个解并返回（在递归函数的开头部分进行判断）。
+
+```cpp
+class Solution {
+private:
+    vector<vector<int> > all_sol;
+    vector<int> one_sol;
+    void combination(int cur, int k, int n) { // cur: 前一层的解元素
+        if (k == 1) {  // 在叶子节点处判断解是否符合条件
+            if (n > cur && n <= 9) {
+                one_sol.emplace_back(n);
+                all_sol.emplace_back(one_sol);
+                one_sol.pop_back();  // 这里不能直接调用.clear()，因为我们这里找到一个解之后是要回溯，而不是重新从1开始寻找解
+            }
+            return;
+        }
+        // 在当前层寻找满足条件的解元素
+        int upper_bound = (n - k * (k - 1) / 2) / k;
+        for (int e = cur + 1; e <= min(upper_bound, 9); e++) {
+            one_sol.emplace_back(e);
+            combination(e, k - 1, n - e);
+            one_sol.pop_back(); // 这个必须有
+        }
+    }
+
+public:
+    vector<vector<int> > combinationSum3(int k, int n) {
+        combination(0, k, n);
+        return all_sol;
+    }
+};
+```
+
+- **解释：**
+
+对于一个解，解中的元素需要满足三个约束条件：
+
+1. 解元素大小在1～9之间——其实是在 [cur+1, min(upper_bound, 9)] 之间（见下文分析）；
+2. 元素不能重复——通过升序地寻找解元素来保证不重复；
+3. 元素之和等于n——通过最后一个元素来保证（见下文分析）。
+
+由上面的约束条件，同时在深度优先搜索的时候强制使得解中的元素为升序，那么可以得到几个隐含的约束：
+
+1. 下一层的节点如果作为解的一个元素，那么总会比上一层已求得的解元素 cur 要大。
+
+2. 每确定某一层的一个解元素之后，下一个元素 m 总会存在一个上限，超过该上限就会使得解的总和偏大。
+
+   由以上两点，可以把解元素的大小限制在上一个解元素 cur 到下一个元素的上限 upper_bound 之间；
+
+3. 最后一个节点不用逐一判断叶子节点，直接判断剩余的值(（即：n - 已求得的(k-1)个元素之和）是否符合要求（小于等于9 且比上一层已求得的解元素大）。
+
+**how to calculate upper_bound**: we force `res` to be in ascending order, so when we got a number `cur`, numbers after `cur` should be large than `cur` and be in ascending order. Say numbers after `cur` is `m, m+1, m+2, ..., m+k-1`, sum of the list is `(m*k + (k-1)*k/2)`, which should be less than `n` in current context. Then we got `m <= (n-k*(k-1)/2)/k`. And upper_bound is `(n-k*(k-1)/2)/k`
+
+这个方案学习了 [fangrui006](https://leetcode.com/fangrui006) 在 [My C++ solution, backtracking.](https://leetcode.com/problems/combination-sum-iii/discuss/60621/My-C++-solution-backtracking.) 的评论，位置：第一条。个人认为，本方法有几大优势：
+
+1. 使用升序寻找解，直接保证了不重复，同时避免了冗余计算；
+2. 在寻找每一个解元素的时候直接根据上界对解空间进行了剪枝，也避免了多余的计算；
+3. 在叶子节点直接进行判断，同样减小了计算量；
+
+因此，我认为这是一个十分值得反复学习的经典案例。
+
+
+
+另外，也可学习：[LeetCode总结，回溯法小结](https://blog.csdn.net/ebowtang/article/details/51570317) 
+
