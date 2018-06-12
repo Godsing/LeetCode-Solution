@@ -3,4 +3,5 @@ Others
 *.out
 main.*
 .ycm_extra_conf.py
+template.md
 Untitled*
