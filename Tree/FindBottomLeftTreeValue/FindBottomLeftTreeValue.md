@@ -1,0 +1,99 @@
+## Problem
+
+Given a binary tree, find the leftmost value in the last row of the tree.
+
+**Example 1:**
+
+```
+Input:
+
+    2
+   / \
+  1   3
+
+Output:
+1
+```
+
+**Example 2:** 
+
+```
+Input:
+
+        1
+       / \
+      2   3
+     /   / \
+    4   5   6
+       /
+      7
+
+Output:
+7
+```
+
+**Note:** You may assume the tree (i.e., the given root node) is not **NULL**.
+
+
+
+## Solution
+
+思路1：广度优先搜索，并且是从右到左。
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int findBottomLeftValue(TreeNode* root) {
+        queue<TreeNode*> qlist;
+        qlist.push(root);
+        TreeNode* res = root;
+        while (qlist.size() > 0) {
+            res = qlist.front();
+            qlist.pop();
+            if (res->right) 
+                qlist.push(res->right);
+            if (res->left)
+                qlist.push(res->left);
+        }
+        return res->val;
+    }
+};
+```
+
+思路2：深度优先搜索，先序遍历，每次遇到更深的结点时记录下来。
+
+```c++
+class Solution {
+public:
+    int findBottomLeftValue(TreeNode* root) {
+        int max_depth = 1, res = root->val;
+        dfs(root, 1, max_depth, res);
+        return res;
+    }
+    void dfs(TreeNode* node, int depth, int& max_depth, int& res) {
+        if (!node) return;
+        if (depth > max_depth) {
+            res = node->val;
+            max_depth = depth;
+        }
+        dfs(node->left, depth+1, max_depth, res);
+        dfs(node->right, depth+1, max_depth, res);
+    }
+};
+```
+
+
+
+## Debug&Learning
+
+
+
