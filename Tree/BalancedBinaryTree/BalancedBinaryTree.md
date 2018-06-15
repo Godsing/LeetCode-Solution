@@ -1,0 +1,84 @@
+## Problem
+
+Given a binary tree, determine if it is height-balanced.
+
+For this problem, a height-balanced binary tree is defined as:
+
+> a binary tree in which the depth of the two subtrees of *every* node never differ by more than 1.
+
+**Example 1:**
+
+Given the following tree `[3,9,20,null,null,15,7]`:
+
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+
+Return true.
+**Example 2:**
+
+Given the following tree `[1,2,2,3,3,null,null,4,4]`:
+
+```
+       1
+      / \
+     2   2
+    / \
+   3   3
+  / \
+ 4   4
+```
+
+Return false.
+
+
+
+## Solution
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+#include <algorithm>
+#include <cstdlib>
+
+class Solution {
+public:
+    //如果不平衡返回-1，否则返回树的最大深度。
+    int depth(TreeNode* node) {
+        if (!node) return 0;
+        int depth_left = depth(node->left);
+        if (depth_left < 0) return -1;
+        int depth_right = depth(node->right);
+        if (depth_right < 0) return -1;
+        if (std::abs(depth_left - depth_right) <= 1)
+            return std::max(depth_left, depth_right) + 1;
+        else 
+            return -1;
+    }
+    bool isBalanced(TreeNode* root) {
+        if (depth(root) < 0)
+            return false;
+        else
+            return true;
+    }
+};
+//Runtime: 10 ms
+```
+
+
+
+## Debug&Learning
+
+
+
