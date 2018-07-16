@@ -1,0 +1,187 @@
+## Problem
+
+Given a binary search tree (BST), find the lowest common ancestor (LCA) of two given nodes in the BST.
+
+According to the [definition of LCA on Wikipedia](https://en.wikipedia.org/wiki/Lowest_common_ancestor): “The lowest common ancestor is defined between two nodes p and q as the lowest node in T that has both p and q as descendants (where we allow **a node to be a descendant of itself**).”
+
+Given binary search tree:  root = [6,2,8,0,4,7,9,null,null,3,5]
+
+```
+        _______6______
+       /              \
+    ___2__          ___8__
+   /      \        /      \
+   0      _4       7       9
+         /  \
+         3   5
+```
+
+**Example 1:**
+
+```
+Input: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8
+Output: 6
+Explanation: The LCA of nodes 2 and 8 is 6.
+```
+
+**Example 2:**
+
+```
+Input: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 4
+Output: 2
+Explanation: The LCA of nodes 2 and 4 is 2, since a node can be a descendant of itself 
+             according to the LCA definition.
+```
+
+**Note:**
+
+- All of the nodes' values will be unique.
+- p and q are different and both values will exist in the BST.
+
+
+
+## Solution
+
+在思考这道题的时候，没有注意到这是一棵搜索树，从而导致我浪费了一些时间用于考虑如何高效的遍历二叉树并找到共同的祖先。
+
+看了 Discuss 板块别人贴出来的方法，思路值得借鉴，但没有必要为了精简代码而牺牲了可读性。
+
+因此，我的代码如下（目标是找到一个结点值介于两者之间的结点）：
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        int a = 0, b = 0;
+        if (p->val < q->val) {
+            a = p->val;
+            b = q->val;
+        } else {
+            a = q->val;
+            b = p->val;
+        }
+        while (root) {
+            if (root->val < a && root->val < b) 
+                root = root->right;
+            else if (root->val > a && root->val > b)
+                root = root->left;
+            else 
+                return root;
+        }
+    }
+};
+```
+
+
+
+## Debug&Learning
+
+### [3 lines with O(1) space, 1-Liners, Alternatives](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/discuss/64963/3-lines-with-O(1)-space-1-Liners-Alternatives) 
+
+Just walk down from the whole tree's root as long as both p and q are in the same subtree (meaning their values are both smaller or both larger than root's). This walks straight from the root to the LCA, not looking at the rest of the tree, so it's pretty much as fast as it gets. A few ways to do it:
+
+**Iterative, O(1) space**
+
+Python
+
+```python
+def lowestCommonAncestor(self, root, p, q):
+    while (root.val - p.val) * (root.val - q.val) > 0:
+        root = (root.left, root.right)[p.val > root.val]
+    return root
+```
+
+Java
+
+```java
+public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+    while ((root.val - p.val) * (root.val - q.val) > 0)
+        root = p.val < root.val ? root.left : root.right;
+    return root;
+}
+```
+
+(in case of overflow, I'd do `(root.val - (long)p.val) * (root.val - (long)q.val)`)
+
+Different Python
+
+```python
+def lowestCommonAncestor(self, root, p, q):
+    a, b = sorted([p.val, q.val])
+    while not a <= root.val <= b:
+        root = (root.left, root.right)[a > root.val]
+    return root
+```
+
+"Long" Python, maybe easiest to understand
+
+```python
+def lowestCommonAncestor(self, root, p, q):
+    while root:
+        if p.val < root.val > q.val:
+            root = root.left
+        elif p.val > root.val < q.val:
+            root = root.right
+        else:
+            return root
+```
+
+**Recursive**
+
+Python
+
+```python
+def lowestCommonAncestor(self, root, p, q):
+    next = p.val < root.val > q.val and root.left or \
+           p.val > root.val < q.val and root.right
+    return self.lowestCommonAncestor(next, p, q) if next else root
+```
+
+Python One-Liner
+
+```python
+def lowestCommonAncestor(self, root, p, q):
+    return root if (root.val - p.val) * (root.val - q.val) < 1 else \
+           self.lowestCommonAncestor((root.left, root.right)[p.val > root.val], p, q)
+```
+
+Java One-Liner
+
+```java
+public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+    return (root.val - p.val) * (root.val - q.val) < 1 ? root :
+           lowestCommonAncestor(p.val < root.val ? root.left : root.right, p, q);
+}
+```
+
+"Long" Python, maybe easiest to understand
+
+```python
+def lowestCommonAncestor(self, root, p, q):
+    if p.val < root.val > q.val:
+        return self.lowestCommonAncestor(root.left, p, q)
+    if p.val > root.val < q.val:
+        return self.lowestCommonAncestor(root.right, p, q)
+    return root
+```
+
+**评论**
+
+[joe.leetcode.2017](https://leetcode.com/joeleetcode2017)
+
+These kind of clever 'one-liners' won't be well received during interviews as they don't properly reflect the structure and thought process of the algorithm. It's better to write out a few more lines for readability.
+
+[vatrevino](https://leetcode.com/vatrevino)
+
+Stefan writes excellent code. But I really really dont like the idea of writing short code, has no real world application. I can't stand the idea of sacrificing readability for a few characters saved.
+
+简而言之：为了写简短的代码而牺牲可读性是不可取的。
