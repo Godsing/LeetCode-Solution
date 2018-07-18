@@ -1,0 +1,50 @@
+## Problem
+
+Given an integer array `nums`, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.
+
+**Example:**
+
+```
+Input: [-2,1,-3,4,-1,2,1,-5,4],
+Output: 6
+Explanation: [4,-1,2,1] has the largest sum = 6.
+```
+
+**Follow up:**
+
+If you have figured out the O(*n*) solution, try coding another solution using the divide and conquer approach, which is more subtle.
+
+
+
+## Solution
+
+动态规划，重点是如何定义状态，并得到状态转移方程。
+
+设状态为 f[j]，表示以 S[j] 结尾的最大连续子序列和，则状态转移方程为：
+$$
+\begin{array}{cl}
+f[j] &= max\{f[j-1] + S[j], S[j]\}, 1 \leq j \leq n \\
+target &= max\{f[j]\}, 1 \leq j \leq n
+\end{array}
+$$
+
+```cpp
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        int res = INT_MIN, f = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            f = f > 0 ? f + nums[i] : nums[i];
+            res = max(res, f);
+        }
+        return res;
+    }
+};
+```
+
+
+
+## Debug&Learning
+
+
+

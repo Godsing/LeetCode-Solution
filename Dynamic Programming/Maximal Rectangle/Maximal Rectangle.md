@@ -1,0 +1,80 @@
+## Problem
+
+Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle containing only 1's and return its area.
+
+**Example:**
+
+```
+Input:
+[
+  ["1","0","1","0","0"],
+  ["1","0","1","1","1"],
+  ["1","1","1","1","1"],
+  ["1","0","0","1","0"]
+]
+Output: 6
+```
+
+
+
+## Solution
+
+对于矩阵中的每一个点(i, j)，定义它的状态为三个值：
+
+left(i, j) —— 表示该点及其向上连续延伸的“1”们，同时向左连续延伸所能到达的边界位置
+
+right(i, j) —— 表示该点及其向上连续延伸的"1"们，同时向右连续延伸所能到达的边界位置+1
+
+high(i, j) —— 表示该点及其向上连续延伸的"1"的总个数。
+
+所以该点向左、向右、向上延伸的"1"们组成的矩形的面积可以写成  [right(i,j) - left(i,j)] * height(i,j)。
+
+如果逐行更新 left, right, high 值，则不需要用二维数组，只需要一维数组即可。代码实现如下：
+
+```cpp
+class Solution {
+public:
+    int maximalRectangle(vector<vector<char>>& matrix) {
+        if (matrix.empty()) return 0;
+        
+        const int m = matrix.size();
+        const int n = matrix[0].size();
+        int left[n], right[n], high[n];
+        fill_n(left, n, 0); 
+        fill_n(right, n, n);
+        fill_n(high, n, 0);
+        int res = 0;
+        for (int i = 0; i < m; i++) {
+            int cur_left = 0, cur_right = n;  //注意，这两个变量需要在每次循环进入新的一行时赋值
+            for (int j = 0; j < n; j++) {
+                if (matrix[i][j] == '1') {
+                    high[j]++;
+                    left[j] = max(left[j], cur_left);  //括号内的left[j]是属于上一行的左边界，相当于left(i-1, j)
+                } else {
+                    high[j] = 0;
+                    left[j] = 0;  //为了在行内向右遍历过程中再次遇到"1"时，上面的max()函数能更新left[j]
+                    cur_left = j + 1;  //cur_left 存储的是当前位置左侧延伸最远的"1"的位置
+                }
+            }
+            for (int j = n - 1; j >= 0; j--) {
+                if (matrix[i][j] == '1') right[j] = min(right[j], cur_right);
+                else {
+                    right[j] = n;
+                    cur_right = j; //cur_right 存储的是当前位置右侧延伸最远的"1"的位置加上1，所以这里不需要j-1
+                }
+            }
+            for (int j = 0; j < n; j++) {
+                res = max(res, (right[j] - left[j]) * high[j]);
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
+## Debug&Learning
+
+
+

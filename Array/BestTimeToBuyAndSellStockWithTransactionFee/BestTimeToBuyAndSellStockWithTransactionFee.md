@@ -73,6 +73,26 @@ public:
 };
 ```
 
+模仿下面写了一个动态规划的版本：
+
+```cpp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices, int fee) {
+        //因为这里把交易费用 fee 的扣除放在了卖出阶段，所以 have_1 不能设置为 INT_MIN，否则可能导致 (have_1 + p - fee) 下溢变成正数。
+        int have_0 = 0, have_1 = -50000;
+        for (int p : prices) {
+            int tmp = have_0;
+            have_0 = max(have_0, have_1 + p - fee);  //卖出阶段才扣除交易费用 fee
+            have_1 = max(have_1, tmp - p);
+        }
+        return have_0;
+    }
+};
+```
+
+
+
 ---
 
 ### **A more concise [solution](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/discuss/108867/C++-concise-solution-O(n)-time-O(1)-space) posted by [zestypanda](https://leetcode.com/zestypanda) :**

@@ -1,0 +1,59 @@
+## Problem
+
+Given a string *s*, partition *s* such that every substring of the partition is a palindrome.
+
+Return the minimum cuts needed for a palindrome partitioning of *s*.
+
+**Example:**
+
+```
+Input: "aab"
+Output: 1
+Explanation: The palindrome partitioning ["aa","b"] could be produced using 1 cut.
+```
+
+
+
+## Solution
+
+动态规划：
+
+设状态为 f[i]，表示 [i, n-1] (n 为字符串长度) 间最少的 cut 数。那么从位置 i 开始往右每遇到 1 个回文，则以下面的状态转移方程更新 f[i]：
+$$
+f[i] = min\{f[j+1] + 1\} \text{ for all j if s[i:j] is a palindrome, i <= j < n}
+$$
+判断 s[i:j] 是否为一个回文的方法，也是一个动态规划，而且可以与状态递推同步进行。
+
+定义状态 p[i]\[j]  = true, if s[i:j] 是一个回文，那么：
+
+p[i]\[j] = (s[i] == s[j] &&  (j - i < 2 || p[i+1]\[j-1]) )
+
+```cpp
+class Solution {
+public:
+    int minCut(string s) {
+        const int n = s.size();
+        int f[n+1];
+        bool p[n][n];
+        fill_n(&p[0][0], n * n, false);
+        for (int i = 0; i <= n; i++)
+            f[i] = n - 1 - i;
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = i; j < n; j++) {
+                if (s[i] == s[j] && (j - i < 2 || p[i+1][j-1])) {  //if s[i:j] is a palindrome, update the f[i]
+                    p[i][j] = true;
+                    f[i] = min(f[i], f[j+1] + 1);
+                }
+            }
+        }
+        return f[0];
+    }
+};
+```
+
+
+
+## Debug&Learning
+
+
+

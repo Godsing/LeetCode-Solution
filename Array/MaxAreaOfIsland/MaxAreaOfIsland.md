@@ -1,0 +1,72 @@
+## Problem
+
+Given a non-empty 2D array `grid` of 0's and 1's, an **island** is a group of `1`'s (representing land) connected 4-directionally (horizontal or vertical.) You may assume all four edges of the grid are surrounded by water.
+
+Find the maximum area of an island in the given 2D array. (If there is no island, the maximum area is 0.)
+
+**Example 1:**
+
+```
+[[0,0,1,0,0,0,0,1,0,0,0,0,0],
+ [0,0,0,0,0,0,0,1,1,1,0,0,0],
+ [0,1,1,0,1,0,0,0,0,0,0,0,0],
+ [0,1,0,0,1,1,0,0,1,0,1,0,0],
+ [0,1,0,0,1,1,0,0,1,1,1,0,0],
+ [0,0,0,0,0,0,0,0,0,0,1,0,0],
+ [0,0,0,0,0,0,0,1,1,1,0,0,0],
+ [0,0,0,0,0,0,0,1,1,0,0,0,0]]
+```
+
+Given the above grid, return 6. Note the answer is not 11, because the island must be connected 4-directionally.
+
+**Example 2:**
+
+```
+[[0,0,0,0,0,0,0,0]]
+```
+
+Given the above grid, return 0.
+
+**Note:** The length of each dimension in the given `grid` does not exceed 50.
+
+
+
+## Solution
+
+```cpp
+class Solution {
+public:
+    int maxAreaOfIsland(vector<vector<int> >& grid) {
+        int result = 0;
+        for (int i = 0; i < grid.size(); i++) {
+            for (int j = 0; j < grid[0].size(); j++) {
+                int area = 0;
+                if (dfs(i, j, &grid, &area)) {
+                    result = max(result, area);  //实时更新结果
+                }
+            }
+        }
+        return result;
+    }
+
+private:
+    bool dfs(int i, int j, vector<vector<int> > *grid, int *area) {
+        static const vector<pair<int, int> > directions{{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        if (i < 0 || i >= grid->size() || j < 0 || j >= (*grid)[0].size() || (*grid)[i][j] <= 0) 
+            return false;
+        (*grid)[i][j] *= -1;  //标记为-1，相当于“被访问过”的意思
+        ++(*area);
+        for (const auto& d: directions) {  //往4个方向继续进行深搜
+            dfs(i + d.first, j + d.second, grid, area);
+        }
+        return true;
+    }
+};
+```
+
+
+
+## Debug&Learning
+
+
+

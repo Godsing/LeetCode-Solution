@@ -49,16 +49,18 @@ public:
         int buy_price = prices[0], sell_price = prices[len - 1], max_profit = 0;
         vector<int> left_profit(len), right_profit(len);
         left_profit[0] = 0, right_profit[len - 1] = 0;
-        
+        //left_profit[i]表示day [0:i] 这段时间内一次交易所可能获得的最大收益
         for (int i = 1; i < len; i++) {
             left_profit[i] = max(left_profit[i - 1], prices[i] - buy_price);
             buy_price = min(buy_price, prices[i]);
         }
+        //right_profit[i]表示day [i:len-1] 这段时间内一次交易所可能获得的最大收益
         for (int i = len - 2; i >= 0; i--) {
             right_profit[i] = max(right_profit[i + 1], sell_price - prices[i]);
             sell_price = max(sell_price, prices[i]);
         }
-        for (int i = 0; i < len -1; i++) { // 在前 len - 1 个切割点中找最佳的点
+        // 在前 len - 1 个切割点中找最佳的点，即两次交易最佳的时间分隔点
+        for (int i = 0; i < len -1; i++) { 
             max_profit = max(max_profit, left_profit[i] + right_profit[i+1]);
         }
         return max(max_profit, left_profit[len - 1]);  // 已知的最佳情况和最后一个切割点的情况做比较
