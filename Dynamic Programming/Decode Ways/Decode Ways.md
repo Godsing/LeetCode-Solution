@@ -1,0 +1,71 @@
+## Problem
+
+A message containing letters from `A-Z` is being encoded to numbers using the following mapping:
+
+```
+'A' -> 1
+'B' -> 2
+...
+'Z' -> 26
+```
+
+Given a **non-empty** string containing only digits, determine the total number of ways to decode it.
+
+**Example 1:**
+
+```
+Input: "12"
+Output: 2
+Explanation: It could be decoded as "AB" (1 2) or "L" (12).
+```
+
+**Example 2:**
+
+```
+Input: "226"
+Output: 3
+Explanation: It could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6).
+```
+
+
+
+## Solution
+
+一维动态规划即可。
+
+设状态 f[i] 表示字符串 s 的前 i 位 s[0 : i-1] 的可分解方式数。状态转移需要分多种情况，细节较多，很容易遗漏某种情况，直接见代码及注释：
+
+```cpp
+class Solution {
+public:
+    int minDistance(string word1, string word2) {
+        const int n = word1.size();
+        const int m = word2.size();
+        int f[n+1][m+1];
+        for (int i = 0; i <= n; i++)
+            f[i][0] = i;  //need to delete i character
+        for (int i = 0; i <= m; i++) 
+            f[0][i] = i;  //need to add i character
+        
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                if (word1[i-1] == word2[j-1])
+                    f[i][j] = f[i-1][j-1];
+                else {
+                    int tmp = min(f[i-1][j], f[i][j-1]);
+                    f[i][j] = min(f[i-1][j-1], tmp) + 1;
+                }
+            }
+        }
+        
+        return f[n][m];
+    }
+};
+```
+
+
+
+## Debug&Learning
+
+
+
