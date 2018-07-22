@@ -27,14 +27,47 @@ For *k* = 3, you should return: `3->2->1->4->5`
 
 
 ```cpp
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if (!head || !head->next) return head;
+        if (k == 1) return head;
+        int len = 0, steps = 0;
+        auto res = head, pre = head, pos = head, tmp = head, tmp1 = head, tmp2 = head;
+        while (tmp) {
+            len++;
+            tmp = tmp->next;
+        }
+        if (len < k) return head;
+        steps = len / k;
+        for (int i = 0; i < steps; i++) {
+            tmp1 = tmp2;
+            tmp2 = pos;
+            tmp = pos;
+            pre = pos;
+            pos = pos->next;
+            for (int j = 1; j < k; j++) {
+                pre = pos;
+                pos = pos->next;
+                pre->next = tmp;
+                tmp = pre;
+            }
+            tmp1->next = pre;
+            if (i == 0) res = pre;
+        }
+        tmp2->next = pos;
+        return res;
+    }
+};
 ```
-
-
-
-
-
-
 
 
 

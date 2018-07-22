@@ -1,7 +1,7 @@
 ## Problem
 
 Given two integers n and k, you need to construct a list which contains n different positive integers ranging from 1 to n and obeys the following requirement: 
-Suppose this list is $[a_1, a_2, a_3, ... , a_n]$ , then the list $ [|a_1 - a_2|, |a_2 - a_3|, |a_3 - a_4|, ... , |a_n-1 - a_n|]$ has exactly k distinct integers.
+Suppose this list is $[a_1, a_2, a_3, ... , a_n]$ , then the list $ [|a_1 - a_2|, |a_2 - a_3|, |a_3 - a_4|, ... , |a_{n-1} - a_n|]$ has exactly k distinct integers.
 
 If there are multiple answers, print **any** of them. (此处any是“任意”，不是“任何”)。
 
@@ -25,7 +25,7 @@ Explanation: The [1, 3, 2] has three different positive integers ranging from 1 
 
 **Note:**
 
-1. The `n` and `k` are in the range 1 <= k < n <= 104.
+1. The `n` and `k` are in the range 1 <= k < n <= 10000.
 
 
 
@@ -75,12 +75,10 @@ class Solution {
     vector<int> constructArray(int n, int k) {
         vector<int> res;
         for (int i = 1, j = n; i <= j; ) {
-            if (k > 1) {
+            if (k > 1) 
                  res.push_back(k-- % 2 ? i++ : j--); //k可被2整除时，取j，否则取i 
-            }
-            else {
+            else 
                  res.push_back(i++); //得到右边子序列 
-            }
         }
         return res;
     }

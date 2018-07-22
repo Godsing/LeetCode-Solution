@@ -206,30 +206,23 @@ Discuss 板块别人贴出来的 Java O(n) 版本：
 class Solution {
     public int numComponents(ListNode head, int[] G) {
         HashSet<Integer> set = new HashSet<>();
-        
         for (int i = 0; i < G.length; i++) {
             set.add(G[i]);
         }
         
         int components = 1;
         boolean isComponent = false;
-        
         ListNode cur = head;
-        
         while (cur != null && !set.isEmpty()) {
             if (set.contains(cur.val)) {
-                set.remove(cur.val);
-                
+                set.remove(cur.val);   
                 isComponent = true;
             } else if (isComponent) {
                 components++;
-                
                 isComponent = false;
             } 
-            
             cur = cur.next;
         }
-        
         return components;
     }
 }

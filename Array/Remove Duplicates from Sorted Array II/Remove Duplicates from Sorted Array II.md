@@ -48,7 +48,27 @@ for (int i = 0; i < len; i++) {
 ## Solution
 
 ```cpp
-
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        if (nums.empty()) return 0;
+        
+        int index = 0;
+        int state = 1;
+        for (int i = 1; i < nums.size(); i++) {
+            if (nums[i] != nums[index]) {
+                nums[++index] = nums[i];
+                state = 1;
+            } else if (state == 1) {
+                nums[++index] = nums[i];
+                state++;
+            } else {
+                state++;
+            }
+        }
+        return index + 1;
+    }
+};
 ```
 
 下面是另一个版本：

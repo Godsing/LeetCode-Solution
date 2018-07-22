@@ -40,7 +40,7 @@ public:
         }
         return result;
     }
-    // Actually, I want to review the QuickSort algo., so I implement quickSort() myself instead of using built-in function sort()
+    // I want to review the QuickSort algo., so I implement quickSort() myself instead of using built-in function sort()
     void swap(int &a, int &b){
       int c = a;
       a = b;
@@ -67,7 +67,6 @@ public:
         quickSort(arr, mid+1, right);
       }
     }
-
 };
 
 ```
@@ -85,13 +84,12 @@ public:
         }
         return result;
     }
-    
 };
 ```
 
-The solution was **accepted**! So, my conjecture is right. But how to prove?
+The solution was **accepted**! So, my conjecture is right. 证明如下：
 
-
+假设有一对数字 (a, b) ，a < b，但若两者不是紧邻的，比如说有一个数 c 介于 a、b 之间。那么和 c 配对的数 d 不管大小如何，我们会发现 (a, b)、(c, d)（或(d, c)） 这样的配对方式一定不是最佳的。所以，反之可以得到，最佳的配对方式一定是 a、b 紧邻的。因此，从小到大，两两配对，才是最佳的配对方式。
 
 ---
 
