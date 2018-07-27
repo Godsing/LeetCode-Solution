@@ -1,0 +1,52 @@
+## Problem
+
+Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+(i.e.,  `[0,1,2,4,5,6,7]` might become  `[4,5,6,7,0,1,2]`).
+
+Find the minimum element.
+
+You may assume no duplicate exists in the array.
+
+**Example 1:**
+
+```
+Input: [3,4,5,1,2] 
+Output: 1
+```
+
+**Example 2:**
+
+```
+Input: [4,5,6,7,0,1,2]
+Output: 0
+```
+
+ 
+
+## Solution
+
+思路：用二分法找到最大值和最小值紧挨着的位置。
+
+```cpp
+class Solution {
+public:
+    int findMin(vector<int>& nums) {
+        if (nums[0] <= nums[nums.size() - 1]) return nums[0];
+        return find(nums, 0, nums.size() - 1);
+    }
+private:
+    int find(vector<int>& nums, int left, int right) {
+        //由于下面的递归过程中用到的left/right均是由mid赋值得来的，所以保证left、right一定不重合
+        if (left == right - 1) return nums[right];  //此时，left是最大值的下标，right是最小值的下标
+        auto mid = (left + right) / 2;
+        if (nums[left] > nums[mid]) {
+            return find(nums, left, mid);  //优先寻找最大值和最小值紧挨着的位置
+        } else {
+            return find(nums, mid, right);
+        }
+    }
+};
+//Runtime: 0 ms, beats 100.00 % of cpp submissions.
+```
+

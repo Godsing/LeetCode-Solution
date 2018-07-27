@@ -1,0 +1,55 @@
+## Problem
+
+Given an array with *n* objects colored red, white or blue, sort them **in-place** so that objects of the same color are adjacent, with the colors in the order red, white and blue.
+
+Here, we will use the integers 0, 1, and 2 to represent the color red, white, and blue respectively.
+
+**Note:** You are not suppose to use the library's sort function for this problem.
+
+**Example:**
+
+```
+Input: [2,0,2,1,1,0]
+Output: [0,0,1,1,2,2]
+```
+
+**Follow up:**
+
+- A rather straight forward solution is a two-pass algorithm using counting sort.
+  First, iterate the array counting number of 0's, 1's, and 2's, then overwrite array with total number of 0's, then 1's and followed by 2's.
+- Could you come up with a one-pass algorithm using only constant space?
+
+
+
+## Solution
+
+根据题目要求，不能使用 algorithms 库中的 sort 函数。同时也不建议使用遍历两次的方法。
+
+如果只能遍历一遍，我所想到的方法如下：
+
+```cpp
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+        if (nums.size() < 2) return ;
+        int p1 = 0, p2 = nums.size() - 1, p;
+        while (nums[p1] == 0) p1++;
+        while (nums[p2] == 2) p2--;
+        p = p1;
+        while (p <= p2) {
+            if (nums[p] == 0) {
+                nums[p] = nums[p1];
+                nums[p1] = 0;
+                while (nums[p1] == 0) p1++;  //永远指向从左到右第一个非 0 的位置
+                p = max(p1, p);  //如果还没遇到过 1，那么可能出现一种情况：最新的 p1 大于当前的 p
+            } else if (nums[p] == 2) {
+                nums[p] = nums[p2];
+                nums[p2] = 2;
+                while (nums[p2] == 2) p2--;  //永远指向从右到左第一个非 2 的位置
+            } else p++;  //nums[p] 为 1 的时候跳过，不需要操作
+        }
+        return ;
+    }
+};
+```
+
