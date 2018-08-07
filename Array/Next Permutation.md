@@ -1,0 +1,46 @@
+## Problem
+
+Implement **next permutation**, which rearranges numbers into the lexicographically next greater permutation of numbers.
+
+If such arrangement is not possible, it must rearrange it as the lowest possible order (ie, sorted in ascending order).
+
+The replacement must be **in-place** and use only constant extra memory.
+
+Here are some examples. Inputs are in the left-hand column and its corresponding outputs are in the right-hand column.
+
+`1,2,3` → `1,3,2`
+`3,2,1` → `1,2,3`
+`1,1,5` → `1,5,1`
+
+
+
+## Solution
+
+用康托编码。
+
+![](http://p1nwamyah.bkt.clouddn.com/18-7-31/82582662.jpg)
+
+---
+
+```cpp
+class Solution {
+public:
+    void nextPermutation(vector<int>& nums) {
+        int partition = nums.size() - 2, larger = nums.size() - 1;
+        while (nums[partition] >= nums[partition+1]) partition--;  //等号不能省略
+        if (partition < 0) 
+            reverse(nums.begin(), nums.end());
+        else {
+            while (nums[larger] <= nums[partition]) larger--;  //等号不能省略
+            int tmp = nums[larger];
+            nums[larger] = nums[partition];
+            nums[partition] = tmp;
+            reverse(nums.begin() + partition + 1, nums.end());
+        }
+        return ;
+    }
+};
+```
+
+
+

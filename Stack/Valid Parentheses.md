@@ -1,0 +1,84 @@
+## Problem
+
+Given a string containing just the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and `']'`, determine if the input string is valid.
+
+An input string is valid if:
+
+1. Open brackets must be closed by the same type of brackets.
+2. Open brackets must be closed in the correct order.
+
+Note that an empty string is also considered valid.
+
+**Example 1:**
+
+```
+Input: "()"
+Output: true
+```
+
+**Example 2:**
+
+```
+Input: "()[]{}"
+Output: true
+```
+
+**Example 3:**
+
+```
+Input: "(]"
+Output: false
+```
+
+**Example 4:**
+
+```
+Input: "([)]"
+Output: false
+```
+
+**Example 5:**
+
+```
+Input: "{[]}"
+Output: true
+```
+
+
+
+## Solution
+
+括号匹配，使用栈就可以解决问题。
+
+```cpp
+class Solution {
+public:
+    bool isValid(string s) {
+        if (s.empty()) return true;
+        stack<char> st;
+        for (int i = 0; i < s.size(); i++) {
+            if (s[i] == '(' || s[i] == '{' || s[i] == '[')
+                st.push(s[i]);
+            if (s[i] == ')' || s[i] == '}' || s[i] == ']') {
+                if (st.empty()) return false;
+                char t = st.top();
+                switch (s[i]) {
+                    case ')':
+                        if (t != '(') return false;
+                        break;
+                    case '}':
+                        if (t != '{') return false;
+                        break;
+                    case ']':
+                        if (t != '[') return false;
+                }
+                st.pop();
+            }
+        }
+        if (st.empty()) return true;
+        return false;
+    }
+};
+//Runtime: 0 ms
+```
+

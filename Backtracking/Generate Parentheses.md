@@ -1,0 +1,46 @@
+## Problem
+
+Given *n* pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+For example, given *n* = 3, a solution set is:
+
+```
+[
+  "((()))",
+  "(()())",
+  "(())()",
+  "()(())",
+  "()()()"
+]
+```
+
+
+
+## Solution
+
+使用回溯法，每次找到一个解，就加入解集中，最后返回解集。
+
+```cpp
+class Solution {
+public:
+    vector<string> generateParenthesis(int n) {
+        vector<string> res;
+        backtracking(res, "", 0, 0, n);
+        return res;
+    }
+    
+private:
+    void backtracking(vector<string>& res, string str, int open, int close, int n) {
+        if (str.length() == 2 * n) {
+            res.emplace_back(str);
+            return ;
+        }
+        //这两个判断是关键，这两个约束保证了组成的字符串必然是格式正确的
+        if (open < n) 
+            backtracking(res, str+'(', open+1, close, n);
+        if (close < open)
+            backtracking(res, str+')', open, close+1, n);
+    }
+};
+```
+
