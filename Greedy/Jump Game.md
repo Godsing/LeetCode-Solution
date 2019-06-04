@@ -150,5 +150,22 @@ public:
 };
 ```
 
+2019-05-29：
+
+```c++
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+        int pos = 0, up = 0;
+        while (pos <= up) {
+            up = max(up, pos + nums[pos]);
+            if (up >= nums.size() - 1) return true;
+            pos++;
+        }
+        return false;
+    }
+};
+```
+
 
 

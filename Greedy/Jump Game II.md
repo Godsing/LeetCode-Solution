@@ -45,6 +45,26 @@ public:
 //Runtime: 8 ms, beats 97.83 % of cpp submissions.
 ```
 
+2019-05-30：用了一种错误的做法，导致超时。回顾之前的AC解法，重写如下：
+
+```c++
+class Solution {
+public:
+    int jump(vector<int>& nums) {
+        int n = nums.size(), now = 0, next = 0, i = 0, steps = 0;
+        while (now < n - 1) {
+            while (i <= now) {
+                next = max(next, i + nums[i]);
+                i++;
+            }
+            steps++;
+            now = next;
+        }
+        return steps;
+    }
+};
+```
+
 
 
 ## Debug&Learning

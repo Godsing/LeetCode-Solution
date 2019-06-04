@@ -42,7 +42,7 @@ public:
                 if (nums[j] + nums[k] < target) j++;
                 else if (nums[j] + nums[k] > target) k--;
                 else {
-                    res.push_back({nums[i], nums[j], nums[k]});  //这里不能用emplace_back()，为什么？
+                    res.push_back({nums[i], nums[j], nums[k]});  //这里不能用emplace_back()，为什么？因为该实参无法原地构造。
                     j++;
                     k--;
                     while (nums[j] == nums[j-1] && nums[k] == nums[k+1] && j < k) j++;

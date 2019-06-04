@@ -67,3 +67,29 @@ int maxArea(vector<int>& height) {
 }
 ```
 
+10 months later: 2019-05-28
+
+重新做了一遍，从两侧往中间靠拢即可。
+
+```c++
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        if (height.size() < 2) return 0;
+        int l = 0, r = height.size() - 1;
+        int area = (r - l) * min(height[l], height[r]);
+        while (l < r) {
+            if (height[l] < height[r]) {
+                int hl = height[l];
+                while (l < r && height[l] <= hl) l++;
+            } else {
+                int hr = height[r];
+                while (l < r && height[r] <= hr) r--;
+            }
+            if (l < r) area = max(area, (r - l) * min(height[l], height[r]));
+        }
+        return area;
+    }
+};
+```
+

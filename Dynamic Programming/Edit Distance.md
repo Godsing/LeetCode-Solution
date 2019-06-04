@@ -44,7 +44,7 @@ exection -> execution (insert 'u')
 
    `f[i][j] = f[i-1][j-1]`
 
-2. 否则，可能从“增加、删除、替换”三种方式得来，找编辑距离最小的一种：
+2. 否则(word1[i-1] != word2[j-1])，只可能从“替换word1[i-1]为word2[j-1]、删除word1[i-1]、在word1末尾增加word2[j-1]”三种方式得来，找编辑距离最小的一种：
 
    `f[i][j] = min(f[i-1][j-1], min(f[i-1][j], f[i][j-1])) + 1`
 
@@ -58,7 +58,7 @@ public:
         const int n = word1.size();
         const int m = word2.size();
         int f[n+1][m+1];
-        for (int i = 0; i <= n; i++)
+        for (int i = 0; i <= n; i++)  //注意 <= 别写成 < 
             f[i][0] = i;  //need to delete i character
         for (int i = 0; i <= m; i++) 
             f[0][i] = i;  //need to add i character

@@ -28,10 +28,10 @@ Output: false
 class Solution {
 public:
     bool isInterleave(string s1, string s2, string s3) {
-        if(s3.length() != s1.length() + s2.length()) return false;
-        
+        //if(s3.length() != s1.length() + s2.length()) return false;
         const int n1 = s1.size();
         const int n2 = s2.size();
+        if (n1 + n2 != s3.size()) return false;
         bool f[n1+1][n2+1];
         f[0][0] = true;
         for (int i = 0; i < n2; i++) {

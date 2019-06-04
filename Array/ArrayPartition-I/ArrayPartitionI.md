@@ -109,7 +109,7 @@ public:
     int arrayPairSum(vector<int>& nums) {
         const auto LEFT = -10000;
         const auto RIGHT = 10000;
-        vector<int> lookup(RIGHT - LEFT + 1, 0);
+       \ vector<int> lookup(RIGHT - LEFT + 1, 0);
         for (const auto& num: nums) {
             ++lookup[num - LEFT];
         }

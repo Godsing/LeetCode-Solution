@@ -71,3 +71,44 @@ public:
 //Runtime: 24 ms
 ```
 
+其实可以不用指针：（2019年03月27日）
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        vector<vector<int> > res;
+        int n = nums.size();
+        if (n < 4) return res;
+        sort(nums.begin(), nums.end());
+        //对于每一个不同的 a
+        for (int i = 0; i < n - 3; i++) {
+            if (i > 0 && nums[i] == nums[i-1]) continue;  //注意需要 i > 0
+            //在给定一个a的前提下，对于每个不同的 b
+            for (int j = i+1; j < n - 2; j++) {
+                if (j > i+1 && nums[j] == nums[j-1]) continue;  //注意这里需要 j > i+1，防止当 nums[i+1] == nums[i] 时，j 刚被初始化为 i+1 后又马上跳过
+                // 夹逼搜索符合条件的两个值，和 3Sum 中相同的夹逼方法
+                int twosum = target - nums[i] - nums[j];
+                int l = j + 1, r = n - 1;
+                while (l < r) {
+                    if (nums[l] + nums[r] < twosum) l++;
+                    else if (nums[l] + nums[r] > twosum) r--;
+                    else {
+                        res.push_back({nums[i], nums[j], nums[l], nums[r]});
+                        l++;
+                        r--;
+                        //关键
+                        while (l < r && nums[l] == nums[l-1] && nums[r] == nums[r+1]) {
+                            l++;
+                            r--;
+                        }
+                    }
+                }
+            }
+        }
+        return res;
+    }
+};
+//Runtime: 28ms
+```
+

@@ -43,11 +43,11 @@ public:
         TreeNode* p = root;
         // 类似于先序遍历，只是先当前结点，再访问右子树，后访问左子树
         while (!s.empty() || p != NULL) {
-            if (p != NULL) {
-                s.push(p);
-                res.emplace_back(p->val);
+            if (p != NULL) {  //先访问右子树
+                s.push(p);  //因为左子树还没访问，需要先将当前节点入栈，以备右子树为空时访问左子树
+                res.emplace_back(p->val);  //因为是先序，所以先处理当前节点，再去访问右孩子
                 p = p->right;
-            } else {
+            } else {  //若右子树为空，再访问左子树
                 TreeNode* tmp = s.top();
                 p = tmp->left;
                 s.pop();
@@ -55,6 +55,68 @@ public:
         }
         vector<int> new_res(res.rbegin(), res.rend());  // 反转，得到后序遍历
         return new_res;
+    }
+};
+```
+
+我的最新解法，思路同上：
+
+```cpp
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int> temp;
+        if (!root) return temp;
+        
+        stack<TreeNode*> nodes;
+        nodes.push(root);
+        
+        TreeNode* node;
+        // 类似于先序遍历，只是先当前结点，再访问右子树，后访问左子树
+        while (!nodes.empty()) {
+            node = nodes.top();
+            nodes.pop();
+            temp.emplace_back(node->val);
+            //若用递归写法，这里应是先访问右子树，再访问左子树；但这里用了栈，所以先压左孩子入栈
+            if (node->left) nodes.push(node->left);
+            if (node->right) nodes.push(node->right);
+        }
+        vector<int> res(temp.rbegin(), temp.rend());  // 反转，得到后序遍历
+        return res;
+    }
+};
+```
+
+我的最新解法，另一个思路：
+
+```cpp
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int> res;
+        if (!root) return res;
+        
+        stack<TreeNode*> nodes;
+        nodes.push(root);
+        
+        TreeNode* cur;
+        TreeNode* pre = nullptr;
+        
+        while (!nodes.empty()) {
+            cur = nodes.top();
+            //当没有左右子树，或者子树都访问过时，才可以取当前节点的值
+            if (!(cur->left || cur->right) ||
+                (pre && (pre == cur->left || pre == cur->right))) {
+                res.emplace_back(cur->val);
+                nodes.pop();
+                pre = cur;
+            } else {
+                // 因为是入栈，所以右孩子先入栈
+                if (cur->right) nodes.push(cur->right);
+                if (cur->left) nodes.push(cur->left);
+            }
+        }
+        return res;
     }
 };
 ```
@@ -88,6 +150,30 @@ public List<Integer> preorderTraversal(TreeNode root) {
     }
     return result;
 }
+```
+
+我的新解法：
+
+```cpp
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int> res;
+        if (root == nullptr) return res;
+        stack<TreeNode*> nodes;
+        nodes.push(root);
+        // 先序遍历，只是先当前结点，再访问左子树，后访问右子树
+        while (!nodes.empty()) {
+            TreeNode* node = nodes.top();
+            nodes.pop();
+            res.emplace_back(node->val);
+            //若用递归写法，这里应是先访问左子树，再访问右子树；但这里用了栈，所以先压右孩子入栈
+            if (node->right) nodes.push(node->right);
+            if (node->left) nodes.push(node->left);
+        }
+        return res;
+    }
+};
 ```
 
 
@@ -129,7 +215,7 @@ public List<Integer> postorderTraversal(TreeNode root) {
     while(!stack.isEmpty() || p != null) {
         if(p != null) {
             stack.push(p);
-            result.addFirst(p.val);  // Reverse the process of preorder
+            result.addFirst(p.val);  // 每次添加的性能都是O(n)?
             p = p.right;             // Reverse the process of preorder
         } else {
             TreeNode node = stack.pop();
@@ -139,3 +225,4 @@ public List<Integer> postorderTraversal(TreeNode root) {
     return result;
 }
 ```
+
